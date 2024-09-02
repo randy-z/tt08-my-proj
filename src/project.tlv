@@ -61,8 +61,27 @@
          
          //$digit[3:0] = $out[3:0];
          
-         m5+sseg_decoder($segments, $out[3:0])
-         *uo_out = {1'b0, ~$segments};
+         //m5+sseg_decoder($segments, $out[3:0])
+         //*uo_out = {1'b0, ~$segments};
+         $digit[3:0] = $out[3:0];
+         *uo_out =
+            $digit == 4'h0 ? 8'b00111111 :
+            $digit == 4'h1 ? 8'b00000110 :
+            $digit == 4'h2 ? 8'b01011011 :
+            $digit == 4'h3 ? 8'b01001111 :
+            $digit == 4'h4 ? 8'b01100110 :
+            $digit == 4'h5 ? 8'b01101101 :
+            $digit == 4'h6 ? 8'b01111101 :
+            $digit == 4'h7 ? 8'b00000111 :
+            $digit == 4'h8 ? 8'b01111111 :
+            $digit == 4'h9 ? 8'b01101111 :
+            $digit == 4'hA ? 8'b01110111 :
+            $digit == 4'hB ? 8'b01111100 :
+            $digit == 4'hC ? 8'b00111001 :
+            $digit == 4'hD ? 8'b01011110 :
+            $digit == 4'hE ? 8'b01111001 :
+                             8'b01110001;
+
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
    
    //m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
