@@ -11,6 +11,8 @@
    
    // ---SETTINGS---
    var(my_design, tt_um_randyzhu_calc)  /// Change tt_um_example to tt_um_<your-github-username>_<name-of-your-project>. (See README.md.)
+   var(target, FPGA)
+   var(in_fpga, 1)
    var(debounce_inputs, 0)
                      /// Legal values:
                      ///   1: Provide synchronization and debouncing on all input signals.
@@ -83,7 +85,8 @@
                              8'b01110001;
 
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
-   
+   m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
+
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    //*uo_out = 8'b0;
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
