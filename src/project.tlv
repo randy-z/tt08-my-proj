@@ -59,7 +59,7 @@
                                       $quot;
          
          
-         $digit[3:0] = $out[3:0];
+         //$digit[3:0] = $out[3:0];
          
          m5+sseg_decoder($segments, $out[3:0])
          *uo_out = {1'b0, ~$segments};
