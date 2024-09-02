@@ -34,61 +34,6 @@
    // Tiny Tapeout inputs can be referenced as, e.g. *ui_in.
    // (Connect Tiny Tapeout outputs at the end of this template.)
    // ============================================
-   
-   |calc
-      @0
-         $val2[7:0] = {4'b0, *ui_in[3:0]};
-         $op[1:0] = *ui_in[5:4];
-         $equals_in = *ui_in[7];
-      @1
-         $reset = *reset;
-         $val1[7:0] = >>1$out[7:0];
-         $sum[7:0] = $val1 + $val2;
-         $diff[7:0] = $val1 - $val2;
-         $prod[7:0] = $val1 * $val2;
-         $quot[7:0] = $val1 / $val2;
-         
-         $valid = $reset ? 1'b0 :
-                  $equals_in && !>>1$equals_in;
-         
-         $out[7:0] = $reset ? 8'b0 :
-                     !$valid ? >>1$out :
-                     ($op == 2'b00) ? $sum :
-                     ($op == 2'b01) ? $diff :
-                     ($op == 2'b10) ? $prod :
-                                      $quot;
-         
-         
-         //$digit[3:0] = $out[3:0];
-         
-         //m5+sseg_decoder($segments, $out[3:0])
-         //*uo_out = {1'b0, ~$segments};
-         $digit[3:0] = $out[3:0];
-         *uo_out =
-            $digit == 4'h0 ? 8'b00111111 :
-            $digit == 4'h1 ? 8'b00000110 :
-            $digit == 4'h2 ? 8'b01011011 :
-            $digit == 4'h3 ? 8'b01001111 :
-            $digit == 4'h4 ? 8'b01100110 :
-            $digit == 4'h5 ? 8'b01101101 :
-            $digit == 4'h6 ? 8'b01111101 :
-            $digit == 4'h7 ? 8'b00000111 :
-            $digit == 4'h8 ? 8'b01111111 :
-            $digit == 4'h9 ? 8'b01101111 :
-            $digit == 4'hA ? 8'b01110111 :
-            $digit == 4'hB ? 8'b01111100 :
-            $digit == 4'hC ? 8'b00111001 :
-            $digit == 4'hD ? 8'b01011110 :
-            $digit == 4'hE ? 8'b01111001 :
-                             8'b01110001;
-
-   // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
-   m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
-
-   // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
-   //*uo_out = 8'b0;
-   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
-   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
 
 \SV
 
@@ -158,7 +103,7 @@ module m5_user_module_name (
    m5+board(/top, /fpga, 7, $, , my_design)
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (bottom-to-top).
    m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
-   //m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
+   
    
 \SV_plus
    
@@ -167,7 +112,28 @@ module m5_user_module_name (
    // your Verilog logic goes here.
    // =========================================
    
-   // ...
+   logic [3:0] cnt;
+   always_ff @(posedge clk) begin
+      cnt <= reset ? 4'b0 : cnt + 1;
+   end
+
+   assign uo_out[7:0] =
+      (cnt == 4'h0) ? 8'b00111111 :
+      (cnt == 4'h1) ? 8'b00000110 :
+      (cnt == 4'h2) ? 8'b01011011 :
+      (cnt == 4'h3) ? 8'b01001111 :
+      (cnt == 4'h4) ? 8'b01100110 :
+      (cnt == 4'h5) ? 8'b01101101 :
+      (cnt == 4'h6) ? 8'b01111101 :
+      (cnt == 4'h7) ? 8'b00000111 :
+      (cnt == 4'h8) ? 8'b01111111 :
+      (cnt == 4'h9) ? 8'b01101111 :
+      (cnt == 4'hA) ? 8'b01110111 :
+      (cnt == 4'hB) ? 8'b01111100 :
+      (cnt == 4'hC) ? 8'b00111001 :
+      (cnt == 4'hD) ? 8'b01011110 :
+      (cnt == 4'hE) ? 8'b01111001 :
+                      8'b01110001;
    
 
    // Connect Tiny Tapeout outputs.
