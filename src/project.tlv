@@ -84,12 +84,12 @@
 
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
    
-   //m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
+   m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
    
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
    //*uo_out = 8'b0;
-   //m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
-   //m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
+   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
+   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
 
 \SV
 
@@ -158,8 +158,8 @@ module m5_user_module_name (
    // Instantiate the Virtual FPGA Lab.
    m5+board(/top, /fpga, 7, $, , my_design)
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (bottom-to-top).
-   //m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
-   m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
+   m5+tt_input_labels_viz(['"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"'])
+   //m5+tt_input_labels_viz(['"Value[0]", "Value[1]", "Value[2]", "Value[3]", "Op[0]", "Op[1]", "Op[2]", "="'])
    
 \SV_plus
    
