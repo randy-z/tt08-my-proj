@@ -10,7 +10,7 @@
    use(m5-1.0)  // See M5 docs in Makerchip IDE Learn menu.
    
    // ---SETTINGS---
-   var(my_design, tt_um_example)  /// Change tt_um_example to tt_um_<your-github-username>_<name-of-your-project>. (See README.md.)
+   var(my_design, tt_um_randyzhu_calc)  /// Change tt_um_example to tt_um_<your-github-username>_<name-of-your-project>. (See README.md.)
    var(debounce_inputs, 0)
                      /// Legal values:
                      ///   1: Provide synchronization and debouncing on all input signals.
@@ -35,7 +35,42 @@
    // (Connect Tiny Tapeout outputs at the end of this template.)
    // ============================================
    
-   // ...
+   |calc
+      @0
+         $val2[7:0] = {4'b0, *ui_in[3:0]};
+         $op[1:0] = *ui_in[5:4];
+         $equals_in = *ui_in[7];
+      @1
+         $reset = *reset;
+         $val1[7:0] = >>1$out[7:0];
+         $sum[7:0] = $val1 + $val2;
+         $diff[7:0] = $val1 - $val2;
+         $prod[7:0] = $val1 * $val2;
+         $quot[7:0] = $val1 / $val2;
+         
+         $valid = $reset ? 1'b0 :
+                  $equals_in && !>>1$equals_in;
+         
+         $out[7:0] = $reset ? 8'b0 :
+                     !$valid ? >>1$out :
+                     ($op == 2'b00) ? $sum :
+                     ($op == 2'b01) ? $diff :
+                     ($op == 2'b10) ? $prod :
+                                      $quot;
+         
+         
+         $digit[3:0] = $out[3:0];
+         
+         m5+sseg_decoder($segments, $out[3:0])
+         *uo_out = {1'b0, ~$segments};
+   // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
+   
+   m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
+   
+   // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
+   //*uo_out = 8'b0;
+   m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
+   m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
 
 \SV
 
